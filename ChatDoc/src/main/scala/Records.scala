@@ -50,6 +50,10 @@ case class NegativeAdverb (adverb: String, x: String)
 case class NegativeWords (word: String, x: String)
 
 
+/* a table for spelling correction*/
+
+case class Words(word: String, x: String)
+
 /*Disease Description Table objects used to interact with it, you will mainly need to access the lazy val to make queries and the case class to create a new row (entry)*/
 object DiseaseDescription {
   def tupled: ((String, String)) => DiseaseDescription = { (disease, description) => DiseaseDescription(disease, description) }
@@ -304,7 +308,18 @@ lazy val negativeWordsTable = TableQuery[NegativeWordsTable]
 
 
 
+object Words {
+  def tupled: ((String, String)) => Words = { (word, x) => Words(word, x)}
+}
 
+class WordsTable(tag: Tag) extends Table[Words](tag, Some("hospital"), "Words")
+{
+  def word = column[String]("word")
+  def x = column[String]("x")
+
+  def * = (word, x) <> (Words.tupled, Words.unapply)
+}
+lazy val wordsTable = TableQuery[WordsTable]
 
 
 
@@ -324,18 +339,18 @@ def csvFile(path: String): List[List[String]] = { //CSV File reader, given a fil
 */
 def fillMainTables(): Unit =
 {
-  val SymptomsPath = "db\\disease_symptoms.csv"
+  val SymptomsPath = "/Users/shadyali/Desktop/tti/db/disease_symptoms.csv"
   csvFile(SymptomsPath).foreach((row: List[String]) =>
     insertSymptom(Symptoms(row.head, row(1), row(2), row(3), row(4), row(5), row(6), row(7), row(8), row(9), row(10), row(11), row(12), row(13), row(14), row(15), row(16), row(17), row(18)))
   )
 
-  val DescriptionsPath = "db\\disease_description.csv"
+  val DescriptionsPath = "/Users/shadyali/Desktop/tti/db/disease_description.csv"
   csvFile(DescriptionsPath).foreach((row: List[String]) => insertDescription(DiseaseDescription(row.head, row.tail.head)))
 
-  val PrecautionsPath = "db\\precautions.csv"
+  val PrecautionsPath = "/Users/shadyali/Desktop/tti/db/precautions.csv"
   csvFile(PrecautionsPath).foreach((row: List[String]) => insertPrecaution(Precautions(row.head, row(1), row(2), row(3), row(4))))
 
-  val PositiveNounPath = "db\\words_lexicon\\PositiveNoun.csv"
+  val PositiveNounPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/PositiveNoun.csv"
   csvFile(PositiveNounPath).foreach((row: List[String]) => {
     val query = positiveNounTable += PositiveNoun(row.head, "")
     val future = db.run(query)
@@ -345,10 +360,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val PositiveVerbPath = "db\\words_lexicon\\PositiveVerb.csv"
+  val PositiveVerbPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/PositiveVerb.csv"
   csvFile(PositiveVerbPath).foreach((row: List[String]) => {
     val query = positiveVerbTable += PositiveVerb(row.head, "")
     val future = db.run(query)
@@ -358,10 +373,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val PositiveAdjectivePath = "db\\words_lexicon\\PositiveAdjective.csv"
+  val PositiveAdjectivePath = "/Users/shadyali/Desktop/tti/db/words_lexicon/PositiveAdjective.csv"
   csvFile(PositiveAdjectivePath).foreach((row: List[String]) => {
     val query = positiveAdjectiveTable += PositiveAdjective(row.head, "")
     val future = db.run(query)
@@ -371,10 +386,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val PositiveAdverbPath = "db\\words_lexicon\\PositiveAdverb.csv"
+  val PositiveAdverbPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/PositiveAdverb.csv"
   csvFile(PositiveAdverbPath).foreach((row: List[String]) => {
     val query = positiveAdverbTable += PositiveAdverb(row.head, "")
     val future = db.run(query)
@@ -384,10 +399,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val PositiveWordsPath = "db\\words_lexicon\\PositiveWords.csv"
+  val PositiveWordsPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/PositiveWords.csv"
   csvFile(PositiveWordsPath).foreach((row: List[String]) => {
     val query = positiveWordsTable += PositiveWords(row.head, "")
     val future = db.run(query)
@@ -397,10 +412,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val NegativeNounPath = "db\\words_lexicon\\NegativeNoun.csv"
+  val NegativeNounPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/NegativeNoun.csv"
   csvFile(NegativeNounPath).foreach((row: List[String]) => {
     val query = negativeNounTable += NegativeNoun(row.head, "")
     val future = db.run(query)
@@ -410,10 +425,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val NegativeVerbPath = "db\\words_lexicon\\NegativeVerb.csv"
+  val NegativeVerbPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/NegativeVerb.csv"
   csvFile(NegativeVerbPath).foreach((row: List[String]) => {
     val query = negativeVerbTable += NegativeVerb(row.head, "")
     val future = db.run(query)
@@ -423,10 +438,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val NegativeAdjectivePath = "db\\words_lexicon\\NegativeAdjective.csv"
+  val NegativeAdjectivePath = "/Users/shadyali/Desktop/tti/db/words_lexicon/NegativeAdjective.csv"
   csvFile(NegativeAdjectivePath).foreach((row: List[String]) => {
     val query = negativeAdjectiveTable += NegativeAdjective(row.head, "")
     val future = db.run(query)
@@ -436,10 +451,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val NegativeAdverbPath = "db\\words_lexicon\\NegativeAdverb.csv"
+  val NegativeAdverbPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/NegativeAdverb.csv"
   csvFile(NegativeAdverbPath).foreach((row: List[String]) => {
     val query = negativeAdverbTable += NegativeAdverb(row.head, "")
     val future = db.run(query)
@@ -449,10 +464,10 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
-  val NegativeWordsPath = "db\\words_lexicon\\NegativeWords.csv"
+  val NegativeWordsPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/NegativeWords.csv"
   csvFile(NegativeWordsPath).foreach((row: List[String]) => {
     val query = negativeWordsTable += NegativeWords(row.head, "")
     val future = db.run(query)
@@ -462,9 +477,22 @@ def fillMainTables(): Unit =
       case Failure(ex) => println(s"failed, reason is $ex")
     }
 
-    Thread.sleep(20)
+    Thread.sleep(2)
   })
 
+
+  val WordsPath = "/Users/shadyali/Desktop/tti/db/words_lexicon/words_alpha.csv"
+  csvFile(WordsPath).foreach((row: List[String]) => {
+    val query = wordsTable += Words(row.head, "")
+    val future = db.run(query)
+
+    future.onComplete {
+      case Success(word) => println(s"done, new auto correct word $word")
+      case Failure(ex) => println(s"failed, reason is $ex")
+    }
+
+    Thread.sleep(2)
+  })
 }
 
 
@@ -718,3 +746,6 @@ def deletePatient(patient: Patient): Unit = {
 
   Thread.sleep(20)
 }
+
+
+
