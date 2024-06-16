@@ -19,3 +19,4 @@ create table if not exists hospital."NegativeAdjective" ("adjective" VARCHAR NOT
 create table if not exists hospital."NegativeAdverb" ("adverb" VARCHAR NOT NULL, "x" VARCHAR NOT NULL);
 create table if not exists hospital."NegativeWords" ("word" VARCHAR NOT NULL, "x" VARCHAR NOT NULL);
 
+create table if not exists hospital."Words" ("word" VARCHAR NOT NULL, "x" VARCHAR NOT NULL);
