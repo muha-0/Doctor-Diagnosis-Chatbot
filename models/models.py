@@ -9,20 +9,33 @@ import re
 import numpy as np
 from fastapi import FastAPI
 import os
+from pydantic import BaseModel
 #import uvicorn
 
 
 models = FastAPI()
 
+# Determine the base directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.dirname(os.path.abspath(__file__)) + '/lstm_acc0.777.h5'
-tokenizer_path = os.path.dirname(os.path.abspath(__file__)) + '/tokenizer.json'
+# Load the model using an absolute path
+model_path = os.path.join(BASE_DIR, 'lstm_acc0.777.h5')
+try:
+    model = tf.keras.models.load_model(model_path)
+except Exception as e:
+    raise RuntimeError(f"Error loading model: {e}")
 
-# Loading the model and the tokenizer
-model = load_model(model_path)
-with open(tokenizer_path) as json_file:
-    tokenizer_json = json_file.read()
-    tokenizer = tokenizer_from_json(tokenizer_json)
+
+# Load the tokenizer using an absolute path
+tokenizer_path = os.path.join(BASE_DIR, 'tokenizer.json')
+try:
+    with open(tokenizer_path) as json_file:
+        tokenizer_json = json_file.read()
+        tokenizer = tokenizer_from_json(tokenizer_json)
+except Exception as e:
+    raise RuntimeError(f"Error loading tokenizer: {e}")
+
+
 
 nltk.download('stopwords')
 
@@ -47,24 +60,31 @@ def clean(text):
 
   return text
 
+# Define a data model for the prediction request
+class PredictionRequest(BaseModel):
+    text: str
+
 
 @models.get("/")
 def read_root():
     return {"message": "Welcome to the FastAPI Deep Learning Model Server"}
 
 @models.post("/predict/")
-def predict(sentence: str):
-    box = []
-    
-    cleaned_sentence = clean(sentence)
-    
-    box.append(cleaned_sentence)
-    
-    box = tokenizer.texts_to_sequences(box)
-    padded = pad_sequences(box, padding = 'post', maxlen = 30)
-    
-    prediction = model.predict(padded) * 10
-    return {"prediction": prediction}
+async def predict(sentence:  PredictionRequest):
+    try:
+        box = []
+        
+        cleaned_sentence = clean(sentence.text)
+        
+        box.append(cleaned_sentence)
+        
+        box = tokenizer.texts_to_sequences(box)
+        padded = pad_sequences(box, padding = 'post', maxlen = 30)
+        
+        prediction = model.predict(padded) * 10
+        return {"prediction": prediction.tolist()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction error: {e}")
 
 #if __name__ == '__main__':
     #uvicorn.run('app:app', host='0.0.0.0', port=8000)

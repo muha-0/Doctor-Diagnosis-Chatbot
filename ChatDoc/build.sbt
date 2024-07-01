@@ -1,3 +1,4 @@
+
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "3.4.1"
@@ -21,6 +22,11 @@ lazy val root = (project in file("."))
       "com.typesafe.slick" %% "slick-hikaricp" % "3.5.1",
       "com.github.tminglei" %% "slick-pg" % "0.22.0",
       "com.github.tminglei" %% "slick-pg_play-json" % "0.22.0",
-      "com.github.tototoshi" %% "scala-csv" % "1.3.10"
+      "com.github.tototoshi" %% "scala-csv" % "1.3.10",
+      ("org.scalaj" %% "scalaj-http" % "2.4.2").cross(CrossVersion.for3Use2_13),
+      "org.json4s" %% "json4s-native" % "4.1.0-M6",
+      "com.lihaoyi" %% "requests" % "0.8.3",
+      "com.lihaoyi" %% "ujson" % "3.3.1",
+      "com.softwaremill.sttp.client4" %% "core" % "4.0.0-M16"
     )
   )

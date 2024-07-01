@@ -41,50 +41,8 @@ def Greet(userInput:String): String = {
   /* Naive Shady do some sort of classification (sentiment analysis) to the responses to know if they are positive, negative, neutral.
     In this context it's used to know if the user is affirming or negating the bot's responses */
   //func2->no modifications
-  def naiveShady(response: String): String =
-  {
-    val tokens: Seq[String] = parseInput(response)
-
-    def positiveWord(word: String): Int = {
-      val query = db
-      val qList: List[Boolean] = List(Await.result(query.run(positiveNounTable.filter(_.noun === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(positiveVerbTable.filter(_.verb === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(positiveAdjectiveTable.filter(_.adjective === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(positiveAdverbTable.filter(_.adverb === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(positiveWordsTable.filter(_.word === word).exists.result), concurrent.duration.Duration.Inf))
-
-      val bool: Boolean = qList.foldLeft(false)(_ || _)
-
-      bool match
-        case false => 0
-        case true => 1
-    }
-
-    def negativeWord(word: String): Int = {
-      val query = db
-      val qList: List[Boolean] = List(Await.result(query.run(negativeNounTable.filter(_.noun === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(negativeVerbTable.filter(_.verb === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(negativeAdjectiveTable.filter(_.adjective === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(negativeAdverbTable.filter(_.adverb === word).exists.result), concurrent.duration.Duration.Inf), Await.result(query.run(negativeWordsTable.filter(_.word === word).exists.result), concurrent.duration.Duration.Inf))
 
 
-      val bool: Boolean = qList.foldLeft(false)(_ || _)
-
-      bool match
-        case false => 0
-        case true => 1
-    }
-
-    val testp = tokens.map((word: String) => positiveWord(word))
-    //println(s"positives: $testp")
-
-    val positives: Int = testp.sum
-    //println(s"positive words $positives")
-
-
-    val testn = tokens.map((word: String) => negativeWord(word))
-    //println(s"negatives: $testn")
-    val negatives: Int = testn.sum
-    //println(s"negative words $negatives")
-
-    positives - negatives match
-      case difference if (difference < 0) => "negative word"
-      case difference if (difference > 0) => "positive word"
-      case difference if (difference == 0) => "neutral word"
-  }
   //func3
   def startPhrasePicker(listNeeded: String): String = {
     val hellos = List("Hellooooo, this a 75 IQ Chat bot, Glad to be here with you today!!", "Hey, it's me, DocBot, how can I help you today?",
