@@ -9,6 +9,7 @@ import re
 import numpy as np
 from fastapi import FastAPI
 import os
+#import uvicorn
 
 
 models = FastAPI()
@@ -65,5 +66,5 @@ def predict(sentence: str):
     prediction = model.predict(padded) * 10
     return {"prediction": prediction}
 
-# Run the server using `uvicorn` in the command line:
-# uvicorn main:app --reload
+#if __name__ == '__main__':
+    #uvicorn.run('app:app', host='0.0.0.0', port=8000)
