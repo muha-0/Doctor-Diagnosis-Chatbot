@@ -33,7 +33,7 @@ under *NAMES*
 # Team #
 Shady Ali (Database Layer, LSTM Deep Learning Model for Sentiment Analysis)  
 Nour Hany  
-Ahmed Sameh  
+Ahmed Sameh (User Interface Design and Integration between database layer and view layer)
 Laila Khaled  
 
 # Head to the Report PDF for more information about the project, contributions, and technologies used
